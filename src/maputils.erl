@@ -36,17 +36,15 @@ deep_get([Key|Keys], Map) ->
 deep_get([], Value) ->
     Value.
 
-deep_put([Key|Keys], Value, Map) when is_map(Map) ->
-    case maps:is_key(Key, Map) of
-        true ->
-            Map#{Key := deep_put(Keys, Value, maps:get(Key, Map))};
-        false ->
+deep_put([Key|Keys], Value, Map) ->
+    case maps:find(Key, Map) of
+        {ok, InnerMap} ->
+            Map#{Key := deep_put(Keys, Value, InnerMap)};
+        error ->
             Map#{Key => deep_put(Keys, Value, #{})}
     end;
 deep_put([], Value, _) ->
-    Value;
-deep_put(_, _, Map) ->
-    exit({error, {badmap, Map}}).
+    Value.
 
 %% TODO: Implement
 flatten_hierarchi(Map) -> Map.
