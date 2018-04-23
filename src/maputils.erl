@@ -7,6 +7,7 @@
 -export([make_hierarchi/2,
          make_hierarchi/3,
          deep_get/2,
+         deep_put/3,
          flatten_hierarchi/1]).
 
 %% API ------------------------------------------------------------------------
@@ -34,6 +35,18 @@ deep_get([Key|Keys], Map) ->
     end;
 deep_get([], Value) ->
     Value.
+
+deep_put([Key|Keys], Value, Map) when is_map(Map) ->
+    case maps:is_key(Key, Map) of
+        true ->
+            Map#{Key := deep_put(Keys, Value, maps:get(Key, Map))};
+        false ->
+            Map#{Key => deep_put(Keys, Value, #{})}
+    end;
+deep_put([], Value, _) ->
+    Value;
+deep_put(_, _, Map) ->
+    exit({error, {badmap, Map}}).
 
 %% TODO: Implement
 flatten_hierarchi(Map) -> Map.
