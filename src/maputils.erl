@@ -7,6 +7,7 @@
 -export([make_hierarchi/2,
          make_hierarchi/3,
          deep_get/2,
+         deep_put/3,
          flatten_hierarchi/1]).
 
 %% API ------------------------------------------------------------------------
@@ -33,6 +34,16 @@ deep_get([Key|Keys], Map) ->
             {error, {key_not_found, Key}}
     end;
 deep_get([], Value) ->
+    Value.
+
+deep_put([Key|Keys], Value, Map) ->
+    case maps:find(Key, Map) of
+        {ok, InnerMap} ->
+            Map#{Key := deep_put(Keys, Value, InnerMap)};
+        error ->
+            Map#{Key => deep_put(Keys, Value, #{})}
+    end;
+deep_put([], Value, _) ->
     Value.
 
 %% TODO: Implement
