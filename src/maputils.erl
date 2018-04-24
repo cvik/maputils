@@ -4,23 +4,23 @@
 -module(maputils).
 
 %% API
--export([make_hierarchi/2,
-         make_hierarchi/3,
+-export([make_hierarchy/2,
+         make_hierarchy/3,
          deep_get/2,
          deep_put/3,
          flatten_hierarchi/1]).
 
 %% API ------------------------------------------------------------------------
 
-make_hierarchi(Order, Maps) ->
-    make_hierarchi(Order, Maps, dont_keep).
+make_hierarchy(Order, Maps) ->
+    make_hierarchy(Order, Maps, dont_keep).
 
-make_hierarchi([], Maps, _) ->
+make_hierarchy([], Maps, _) ->
     Maps;
-make_hierarchi([Key|Order], Maps, Keep) ->
+make_hierarchy([Key|Order], Maps, Keep) ->
     Map = split_on_key(Key, Maps, Keep),
     F = fun(InnerKey, InnerMaps, Acc) ->
-            Acc#{InnerKey=>make_hierarchi(Order, InnerMaps, Keep)}
+            Acc#{InnerKey=>make_hierarchy(Order, InnerMaps, Keep)}
         end,
     maps:fold(F, #{}, Map).
 
