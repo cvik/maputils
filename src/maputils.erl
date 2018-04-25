@@ -8,7 +8,7 @@
          make_hierarchy/3,
          deep_get/2,
          deep_put/3,
-         flatten_hierarchi/1]).
+         append/3]).
 
 %% API ------------------------------------------------------------------------
 
@@ -46,8 +46,13 @@ deep_put([Key|Keys], Value, Map) ->
 deep_put([], Value, _) ->
     Value.
 
-%% TODO: Implement
-flatten_hierarchi(Map) -> Map.
+append(Key, Value, Map) ->
+    case maps:find(Key, Map) of
+        {ok, PrevValue} ->
+            Map#{Key:=[Value|PrevValue]};
+        error ->
+            Map#{Key=>[Value]}
+    end.
 
 %% Internal -------------------------------------------------------------------
 
