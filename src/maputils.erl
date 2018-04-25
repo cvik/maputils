@@ -10,11 +10,17 @@
          deep_put/3,
          append/3]).
 
+-type key() :: any().
+
 %% API ------------------------------------------------------------------------
 
+-spec make_hierarchy([key()], map()) -> map()
+                                      | {error, {key_not_found, key()}}.
 make_hierarchy(Order, Maps) ->
     make_hierarchy(Order, Maps, dont_keep).
 
+-spec make_hierarchy([key()], map(), keep|dont_keep) -> map()
+                                                      | {error, {key_not_found, key()}}.
 make_hierarchy([], Maps, _) ->
     Maps;
 make_hierarchy([Key|Order], Maps, Keep) ->
@@ -24,6 +30,8 @@ make_hierarchy([Key|Order], Maps, Keep) ->
         end,
     maps:fold(F, #{}, Map).
 
+-spec deep_get([key()], map()) -> any()
+                                | {error, {key_not_found, any()}}.
 deep_get([Key|Keys], Map) ->
     case maps:find(Key, Map) of
         {ok, InnerMap} when is_map(InnerMap) ->
@@ -36,6 +44,7 @@ deep_get([Key|Keys], Map) ->
 deep_get([], Value) ->
     Value.
 
+-spec deep_put([key()], any(), map()) -> map().
 deep_put([Key|Keys], Value, Map) ->
     case maps:find(Key, Map) of
         {ok, InnerMap} ->
@@ -46,6 +55,7 @@ deep_put([Key|Keys], Value, Map) ->
 deep_put([], Value, _) ->
     Value.
 
+-spec append(key(), any(), map()) -> map().
 append(Key, Value, Map) ->
     case maps:find(Key, Map) of
         {ok, PrevValue} ->
