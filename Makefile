@@ -21,3 +21,6 @@ clean:
 
 distclean: clean
 	@rm -rfv _build
+
+publish: test
+	@rebar3 hex publish
