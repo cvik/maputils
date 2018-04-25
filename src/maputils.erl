@@ -8,7 +8,9 @@
          make_hierarchy/3,
          deep_get/2,
          deep_put/3,
-         append/3]).
+         append/3,
+         inc/2,
+         inc/3]).
 
 -type key() :: any().
 
@@ -62,6 +64,21 @@ append(Key, Value, Map) ->
             Map#{Key:=[Value|PrevValue]};
         error ->
             Map#{Key=>[Value]}
+    end.
+
+-spec inc(key(), map()) -> map() | {error, badarg}.
+inc(Key, Map) ->
+    inc(Key, 1, Map).
+
+-spec inc(key(), number(), map()) -> map() | {error, badarg}.
+inc(Key, Amount, Map) ->
+    case maps:find(Key, Map) of
+        {ok, Counter} when is_number(Counter) ->
+            Map#{Key:=Counter+Amount};
+        {ok, _} ->
+            {error, badarg};
+        error ->
+            Map#{Key=>Amount}
     end.
 
 %% Internal -------------------------------------------------------------------
