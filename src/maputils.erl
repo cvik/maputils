@@ -1,4 +1,4 @@
-%% Erlang maps utillity functions
+%% Erlang maps utility functions
 %%
 
 -module(maputils).
