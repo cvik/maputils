@@ -10,7 +10,8 @@
          deep_put/3,
          append/3,
          inc/2,
-         inc/3]).
+         inc/3,
+         merge_with/3]).
 
 -type key() :: any().
 
@@ -80,6 +81,22 @@ inc(Key, Amount, Map) ->
         error ->
             Map#{Key=>Amount}
     end.
+
+-spec merge_with(fun((key(), any(), any()) -> any()), map(), map())
+                -> map() | {error, badarg}.
+merge_with(Fun, Map1, Map2) when is_function(Fun, 3), is_map(Map1), is_map(Map2) ->
+    maps:fold(fun (K, V1, Acc) ->
+                      case maps:find(K, Acc) of
+                          {ok, V2} ->
+                              maps:update(K, Fun(K, V1, V2), Acc);
+                          error ->
+                              maps:put(K, V1, Acc)
+                      end
+              end,
+              Map1, Map2);
+merge_with(_, _, _) ->
+    {error, badarg}.
+
 
 %% Internal -------------------------------------------------------------------
 
